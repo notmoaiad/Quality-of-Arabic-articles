@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تحليل النصوص: جيد أم سيء</title>
+  <style>
+    body {
+      font-family: 'Tahoma', sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      direction: rtl;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.85); /* White with transparency */
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #4CAF50; /* Green for heading */
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      margin-bottom: 15px;
+      border: 2px solid #4CAF50;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 16px;
+      font-family: 'Tahoma', sans-serif;
+      resize: none;
+      background: #f9f9f9; /* Light gray */
+      color: #333; /* Dark gray */
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+      transform: scale(1.05);
+    }
+
+    #output {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    #output.good {
+      color: #4CAF50;
+    }
+
+    #output.bad {
+      color: #f44336;
+    }
+
+    #output.neutral {
+      color: #ff9800;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>تحليل النصوص: جيد أم سيء</h1>
+    <textarea id="inputText" placeholder="اكتب فقرة هنا..."></textarea>
+    <button id="evaluateButton">تحليل النص</button>
+    <div id="output"></div>
+  </div>
+  <script>
+    document.getElementById("evaluateButton").addEventListener("click", async function () {
+      const inputText = document.getElementById("inputText").value.trim();
+      const outputDiv = document.getElementById("output");
+
+      if (!inputText) {
+        outputDiv.textContent = "يرجى إدخال نص.";
+        outputDiv.className = '';
+        return;
+      }
+
+      try {
+        // Make a POST request to the API
+        const response = await fetch('http://88.214.57.10:8000/api/result', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ text: inputText })
+        });
+
+        if (!response.ok) {
+          throw new Error('خطأ في الاتصال بالخادم.');
+        }
+
+        const result = await response.json();
+       const sentiment = result.result; 
+        // Assuming the API response contains a "result" field with values "good", "bad", or "neutral"
+        outputDiv.textContent = sentiment;
+
+          
+      } catch (error) {
+        outputDiv.textContent = error.message;
+        outputDiv.className = '';
+      }
+    });
+  </script>
+</body>
+</html>
+
